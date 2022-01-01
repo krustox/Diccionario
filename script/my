@@ -1,0 +1,300 @@
+/**
+ * @author Diego
+ */
+$(document).ready(function(){
+	$("#fabricante").change(function() {
+  		$("#tipo").load("/Diccionario/ajax/select_tipo.php?fabricante=" + $("#fabricante").val());
+  		//window.alert("sometext");
+	});
+});
+
+$(document).ready(function(){
+	$("#tipo").change(function() {
+  		$("#producto").load("/Diccionario/ajax/select_producto.php?tipo=" + $("#tipo").val());
+  		//window.alert("sometext");
+	});
+});
+
+$(document).ready(function(){
+	$("#producto").change(function() {
+  		$("#componente").load("/Diccionario/ajax/select_componente.php?producto=" + $("#producto").val());
+  		//window.alert("sometext");
+	});
+});
+
+$(document).ready(function(){
+	$("#componente").change(function() {
+  		$("#metrica").load("/Diccionario/ajax/select_metrica.php?componente=" + $("#componente").val());
+  		//window.alert("sometext");
+	});
+});
+
+$(document).ready(function(){
+	$("#servicio").change(function() {
+		//$("#ttable").load("/Diccionario/ajax/select_table.php?servicio=" + $("#servicio").val());
+		window.location.href = window.location.href.split("?")[0] + "?servicio="+ $("#servicio").val();
+	});
+});
+
+$(document).ready(function(){
+	$("input[type='checkbox']").change(function() {
+	    if(this.checked) {
+	        //alert("CHEKCEO "+ this.name+ " #"+this.id+" lbl" );
+					$.ajax({ type: "GET",
+				     url: "/Diccionario/ajax/edit_variable.php?id=" + this.name+"&val=t",
+				     async: false,
+				     success : function(text)
+				     {
+				         response= text;
+						 }
+					});
+				}else{
+				//	alert("NO CHEKCEO "+ this.name+ " #"+this.id+" lbl" );
+					$.ajax({ type: "GET",
+				     url: "/Diccionario/ajax/edit_variable.php?id=" + this.name+"&val=f",
+				     async: false,
+				     success : function(text)
+				     {
+				         response= text;
+						 }
+					});
+				}
+				});
+	    });
+
+
+//INDEX
+$( function() {
+    $( "#accordion" ).accordion({
+      collapsible: true,
+      active: 0,
+      heightStyle: "content"
+    });
+  } );
+
+function tipo(id, nombre){
+	$("#div_tipo").empty();
+	$("#fabricante").text("");
+  	$("#fabricante").append("Fabricante: <span class=\"texto\"> "+nombre+"</span>");
+		$("#tipo").text("Tipo de Monitoreo:");
+		$("#producto").text("Producto:");
+		$("#componente").text("Grupo de Metricas:");
+		$("#metrica").text("Metrica");
+		$("#variables").text("Variables:");
+  	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/select_tipo.php?fabricante=" + id +"&u=2",
+     async: false,
+     success : function(text)
+     {
+         response= text;
+         $("#div_tipo").append(response);
+     }
+});
+
+ $( "#accordion" ).accordion({active: 1});
+jsRemoveWindowLoad();
+  }
+
+function producto(id, nombre){
+	$("#div_producto").empty();
+	$("#tipo").text("");
+	$("#tipo").append("Tipo de Monitoreo: <span class=\"texto\"> "+nombre+"</span>");
+	$("#producto").text("Producto:");
+	$("#componente").text("Grupo de Metricas:");
+	$("#metrica").text("Metrica");
+	$("#variables").text("Variables:");
+  	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/select_producto.php?tipo=" + id +"&u=2",
+     async: false,
+     success : function(text)
+     {
+         response= text;
+
+     }
+});
+ 	$("#div_producto").append(response);
+ 	$( "#accordion" ).accordion({active: 2});
+  }
+
+  function componente(id, nombre){
+  	$("#div_componente").empty();
+  	$("#producto").text("");
+  	$("#producto").append("Producto: <span class=\"texto\"> "+nombre+"</span>");
+		$("#componente").text("Grupo de Metricas:");
+		$("#metrica").text("Metrica");
+		$("#variables").text("Variables:");
+  	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/select_componente.php?producto=" + id +"&u=2",
+     async: false,
+     success : function(text)
+     {
+         response= text;
+     }
+});
+ $("#div_componente").append(response);
+ $( "#accordion" ).accordion({active: 3});
+  }
+
+  function metrica(id, nombre){
+  	$("#div_metrica").empty();
+  	$("#componente").text("");
+  	$("#componente").append("Grupo de Metricas: <span class=\"texto\"> "+nombre+"</span>");
+		$("#metrica").text("Metrica");
+		$("#variables").text("Variables:");
+  	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/select_metrica.php?componente=" + id +"&u=2",
+     async: false,
+     success : function(text)
+     {
+         response= text;
+     }
+});
+ $("#div_metrica").append(response);
+ $( "#accordion" ).accordion({active: 4});
+  }
+
+  function variable(id, nombre){
+  	$("#div_variables").empty();
+  	$("#metrica").text("");
+  	$("#metrica").append("Metrica: <span class=\"texto\"> "+nombre+"</span>");
+		$("#variables").text("Variables:");
+  	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/select_variable.php?metrica=" + id +"&u=2",
+     async: false,
+     success : function(text)
+     {
+         response= text;
+     }
+});
+ $("#div_variables").append(response);
+ $( "#accordion" ).accordion({active: 5});
+  }
+
+
+function eliminar(id_ant,id,tabla){
+	if (confirm("Desea eliminar el registro?")) {
+        // your deletion code
+	var response;
+	$.ajax({ type: "GET",
+     url: "/Diccionario/ajax/eliminar_dato.php?tabla=" + tabla +"&anterior="+ id_ant +"&actual="+id,
+     async: false,
+	 datatype: "html",
+     success : function(data)
+     {
+		window.location = window.location.href.split("?")[0];
+		if(data.length <40){
+
+		}else{
+			window.alert("No se pudo eliminar el registro, revise las relaciones en niveles inferiores");
+		}
+        response= data;
+     }
+	});
+}
+    return false;
+}
+
+function EliminarVarios(tabla){
+	if (confirm("Desea eliminar los registros seleccionados (En caso de ser padre, se eliminaran las ramas correspondientes)?")) {
+		var response;
+		var check = [];
+		var name = "";
+		var anterior="";
+		if (confirm("Desea segunda confirmacion por cada elemento?")) {
+
+      $.each($("input[type='checkbox']:checked"), function(){
+        check.push($(this).val());
+				name = $(this).attr("name");
+				id = $(this).val();
+				if(confirm("Desea eliminar "+id+" de "+name+"? ")){
+				$.ajax({ type: "GET",
+			     url: "/Diccionario/ajax/eliminar_datos.php?tabla=" + tabla +"&id="+ id,
+			     async: false,
+				 datatype: "html",
+			     success : function(data)
+			     {
+					window.location = window.location.href.split("?")[0];
+					window.alert(data);
+			        response= data;
+			     }
+				});
+			}
+      });
+		}else{
+			$.each($("input[type='checkbox']:checked"), function(){
+        check.push($(this).val());
+				name = $(this).attr("name");
+				anterior = $(this).val();
+				$.ajax({ type: "GET",
+			     url: "/Diccionario/ajax/eliminar_datos.php?tabla=" + tabla +"&id="+ id,
+			     async: false,
+				 datatype: "html",
+			     success : function(data)
+			     {
+					window.location = window.location.href.split("?")[0];
+					//window.alert(data);
+			        response= data;
+			     }
+				});
+      });
+		}
+}
+    return false;
+}
+
+
+$(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#table tfoot th').each( function () {
+        var title = $(this).text();
+        	$(this).html( '<input type="text" placeholder="'+title+'" />' );
+    } );
+
+    // DataTable
+    var table = $('#table').DataTable();
+
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+
+        $( "input[type='text']", this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that.search( this.value )
+								.draw();
+            }
+        } );
+    } );
+} );
+
+
+
+
+$(document).ready(function(){
+$("form").submit(function () {
+    if($("#fabricante option:selected").val() == " ") {
+        window.alert("El fabricante es obligatorio");
+        return false;
+    }else if ($("#tipo option:selected").val() == " ") {
+        window.alert("La tipo de monitoreo es obligatorio");
+        return false;
+    }else if ($("#producto option:selected").val() == " ") {
+        window.alert("El producto es obligatorio");
+        return false;
+    }else if ($("#component option:selected").val() == " ") {
+        window.alert("El componente es obligatorio");
+        return false;
+    }else if ($("#metrica option:selected").val() == " ") {
+        window.alert("La metrica es obligatoria");
+        return false;
+    }else if($("input").val().length < 0){
+    	window.alert("El campo de texto es obligatorio");
+        return false;
+    }
+    return true;
+});
+});

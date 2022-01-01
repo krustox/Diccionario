@@ -1,0 +1,28 @@
+--Mysql
+CREATE DATABASE diccionario;
+CREATE TABLE diccionario.fabricante (id integer auto_increment, nombre varchar(255) unique, PRIMARY KEY(id));
+CREATE TABLE diccionario.tipo_monitoreo (id integer auto_increment, nombre varchar(255), fabricante integer, PRIMARY KEY(id), FOREIGN KEY(fabricante) REFERENCES fabricante(id));
+CREATE TABLE diccionario.producto (id integer auto_increment, nombre varchar(255), tipo_monitoreo integer, PRIMARY KEY(id), FOREIGN KEY(tipo_monitoreo) REFERENCES tipo_monitoreo(id));
+CREATE TABLE diccionario.componente (id integer auto_increment, nombre varchar(255), producto integer, PRIMARY KEY(id), FOREIGN KEY(producto) REFERENCES producto(id));
+CREATE TABLE diccionario.metrica (id integer auto_increment, nombre varchar(255), componente integer, PRIMARY KEY(id), FOREIGN KEY(componente) REFERENCES componente(id));
+CREATE TABLE diccionario.variable (id integer auto_increment, nombre varchar(255), metrica integer, descripcion varchar(2000), unidad_metrica varchar(255), dominio_valores varchar(255), contexto varchar(255), frecuencia varchar(255), granularidad varchar(255), PRIMARY KEY(id), FOREIGN KEY(metrica) REFERENCES metrica(id));
+
+--Postgresql
+CREATE DATABASE diccionario;
+CREATE SCHEMA diccionario;
+CREATE TABLE diccionario.fabricante (id serial, nombre varchar(255) unique, PRIMARY KEY(id));
+CREATE TABLE diccionario.tipo_monitoreo (id serial, nombre varchar(255), fabricante integer, PRIMARY KEY(id), FOREIGN KEY (fabricante) REFERENCES diccionario.fabricante (id),unique(nombre,fabricante));
+CREATE TABLE diccionario.producto (id serial, nombre varchar(255), tipo_monitoreo integer, PRIMARY KEY(id), FOREIGN KEY(tipo_monitoreo) REFERENCES diccionario.tipo_monitoreo(id),unique(nombre,tipo_monitoreo));
+CREATE TABLE diccionario.componente (id serial, nombre varchar(255), producto integer, PRIMARY KEY(id), FOREIGN KEY(producto) REFERENCES diccionario.producto(id),unique(nombre,producto));
+CREATE TABLE diccionario.metrica (id serial, nombre varchar(255), componente integer, PRIMARY KEY(id), FOREIGN KEY(componente) REFERENCES diccionario.componente(id),unique(nombre,componente));
+CREATE TABLE diccionario.variable (id serial, nombre varchar(255), metrica integer, descripcion varchar(2000), unidad_metrica varchar(255), frecuencia varchar(255), PRIMARY KEY(id), FOREIGN KEY(metrica) REFERENCES diccionario.metrica(id),unique(nombre,metrica));
+CREATE TABLE diccionario.correo (id serial, variable integer, servicio integer, PRIMARY KEY(id), FOREIGN KEY(variable) REFERENCES diccionario.variable(id),unique(variable,servicio));
+
+--DB2
+CREATE SCHEMA diccionario;
+CREATE TABLE diccionario.fabricante (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),nombre varchar(255) not null unique, PRIMARY KEY(id));
+CREATE TABLE diccionario.tipo_monitoreo (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), nombre varchar(255), fabricante integer, PRIMARY KEY(id), FOREIGN KEY(fabricante) REFERENCES diccionario.fabricante(id));
+CREATE TABLE diccionario.producto (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), nombre varchar(255), tipo_monitoreo integer, PRIMARY KEY(id), FOREIGN KEY(tipo_monitoreo) REFERENCES diccionario.tipo_monitoreo(id));
+CREATE TABLE diccionario.componente (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), nombre varchar(255), producto integer, PRIMARY KEY(id), FOREIGN KEY(producto) REFERENCES diccionario.producto(id));
+CREATE TABLE diccionario.metrica (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), nombre varchar(255), componente integer, PRIMARY KEY(id), FOREIGN KEY(componente) REFERENCES diccionario.componente(id));
+CREATE TABLE diccionario.variable (id integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), nombre varchar(255), metrica integer, descripcion varchar(2000), unidad_metrica varchar(255), dominio_valores varchar(255), contexto varchar(255), frecuencia varchar(255), granularidad varchar(255), PRIMARY KEY(id), FOREIGN KEY(metrica) REFERENCES diccionario.metrica(id));
